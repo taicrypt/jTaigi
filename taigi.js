@@ -1,8 +1,4 @@
 /*
-sonority a > oo > e = o > i = u〈低元音 > 高元音 > 無擦通音 > 擦音 > 塞音)
-tone priority: o > a > e > u > i
-syllable := initial + nucleus + coda + tone
-
 pojSou2tlSoo(pojs, nasal)
 	白話字數字式 => 台羅數字式
 tlSoo2pojSou(tls, nasal)
@@ -14,15 +10,9 @@ pojSou2Tiau(pojSou)
 tlSoo2Tiau(soo)
 	台羅數字式 => 台羅調符式
 */
-
 "use strict";
+
 var TAIGI = {};
-/*
-TAIGI.initial = "((?:m|M|n|N|ng|Ng|p|P|ph|Ph|b|B|t|T|th|Th|k|K|kh|Kh|g|G|ch|Ch|chh|Chh|ts|Ts|tsh|Tsh|j|J|s|S|h|H|l|L)?)";
-TAIGI.nucleus = "((?:o͘|o|a|e|u|i||O͘|O|A|E|U|I){1,3})";
-TAIGI.coda = "((?:rm|rng|rn|r|m|ng|n|hN|N|ⁿ|nn|p|t|k|h)?)";
-TAIGI.tone = "([1-9]?)";
-*/
 
 Function.prototype.method = function (name, func) {
 	if (!this.prototype[name]){
@@ -47,22 +37,18 @@ function thuiUann(bun, tui) {
 	return bun;
 }
 
-TAIGI.u358 = { /* POJ */
-	"oo": "o͘", "ou": "o͘",
-	"Oo": "O͘", "Ou": "O͘", 
-};
-
-TAIGI.suaTiau = {
+TAIGI.tshiauTiau = {
 	"((?:m|M|n|N|ng|Ng|p|P|ph|Ph|b|B|t|T|th|Th|k|K|kh|Kh|g|G|ch|Ch|chh|Chh|ts|Ts|tsh|Tsh|j|J|s|S|h|H|l|L)?)((?:o͘|o|a|e|u|i|O͘|O|A|E|U|I){1,3})((?:N|ⁿ|nn|rm|rng|rn|r|m|ng|n|hN|p|t|k|h)?)([1-9]?)": "$1$2$4$3",
-	"a(u|i)([1-9])": "a$2$1",
 };
-TAIGI.suaTiau.poj = {
+TAIGI.tshiauTiau.poj = {
+	"a(u|i)([1-9])": "a$2$1",
 	"o(a|ai|e)([1-9])": "o$2$1", // POJ 
 	"ui([1-9])": "u$1i", //POJ
 };
-TAIGI.suaTiau.tl = {
+TAIGI.tshiauTiau.tl = {
+	"a(u|i)([1-9])": "a$2$1",
 	"oo([1-9])": "o$1o", // TL
-}
+};
 
 TAIGI.S2T = {
 	"a1": "a", "A1": "A",
@@ -138,6 +124,10 @@ TAIGI.S2T = {
 	"ngh8": "n̍gh", "Ngh8": "N̍gh",
 	"ng9": "n̆g", "Ng9": "N̆g"
 };
+TAIGI.S2T.U0358 = { /* POJ */
+	"oo": "o͘", "ou": "o͘",
+	"Oo": "O͘", "Ou": "O͘", 
+};
 
 TAIGI.T2S = {
 	//"a": "a1", "A": "A1",
@@ -176,7 +166,6 @@ TAIGI.T2S = {
 	"ō͘": "o͘7", "Ō͘": "O͘7",
 	"o̍͘": "o͘8", "O̍͘": "O͘8",
 	"ŏ͘": "o͘9", "Ŏ͘": "O͘9",
-	"o͘": "ou", "O͘": "ou", // <--
 	//"o": "o1", "O": "O1",
 	"ó": "o2", "Ó": "O2",
 	"ò": "o3", "Ò": "O3",
@@ -214,13 +203,14 @@ TAIGI.T2S = {
 	"n̆g": "ng9", "N̆g": "Ng9",
 	"n̍gh": "ngh8", "N̍gh": "Ngh8",
 };
-
-TAIGI.poj2tl= {
-	"ch": "ts", "Ch": "Ts",
-	"ou": "oo", "Ou": "Oo", "oa": "ua", "Oa": "Ua", "oe": "ue", "Oe": "Ue",
-	"eng": "ing", "Eng": "Ing",
-	"ek": "ik", "Ek": "Ik",
+TAIGI.T2S.U0358 = {};
+TAIGI.T2S.U0358.poj = {
+	"o͘": "ou", "O͘": "Ou", // <--
 };
+TAIGI.T2S.U0358.tl= {
+	"o͘": "oo", "O͘": "Oo", // <--
+};
+
 TAIGI.nasal = {};
 TAIGI.nasal.N = {
 	"(?:ou|oo|o)(h?)(?:N|nn|ⁿ)([1-9]?)": "oN$1$2",
@@ -232,13 +222,13 @@ TAIGI.nasal.nn = {
 	"([aeiouAEIOU])(h?)(?:N|nn|ⁿ)(h?[1-9]?)": "$1nn$2$3",
 	//"(?<=[aeiou])(?:N|nn)(h?[1-9]?)": "nn$1", // non-canonical POJ nasal form: nnh rather than hnn
 };
-TAIGI.nasal.u207= {
+TAIGI.nasal.U207 = {
 	"(?:ou|oo|o)(h?)(h?)(?:N|nn|ⁿ)([1-9]?)": "oⁿ$1$2",
 	"([aeiouAEIOU])(h?)(?:N|nn|ⁿ)(h?[1-9]?)": "$1ⁿ$2$3",
 	//"(?<=[aeiou])(?:N|nn)(h?[1-9]?)": "nn$1", // non-canonical POJ nasal form: nnh rather than hnn
 };
 
-TAIGI.tl2poj= {
+TAIGI.TL2POJ = {
 	"oonn": "ouN", "Oonn": "OuN",
 	"onn": "ouN", "Onn": "OuN",
 	"ts": "ch", "Ts": "Ch", 
@@ -247,9 +237,15 @@ TAIGI.tl2poj= {
 	"ing": "eng", "Ing": "Eng", "ik": "ek", "Ik": "Ek",
 	"nnh": "hN", "Nh": "hN", "hnn": "hN",
 };
+TAIGI.POJ2TL = {
+	"ch": "ts", "Ch": "Ts",
+	"ou": "oo", "Ou": "Oo", "oa": "ua", "Oa": "Ua", "oe": "ue", "Oe": "Ue",
+	"eng": "ing", "Eng": "Ing",
+	"ek": "ik", "Ek": "Ik",
+};
 
-TAIGI.siangLooBue = {
-	"([a-uA-U]*)([1-9])([a-zⁿN]*)": "$1$3$2",
+TAIGI.sakTiau = {
+	"([a-uoA-UO͘]*)([1-9])([a-uoⁿN]*)": "$1$3$2",
 };
 
 TAIGI.poo14 = {
@@ -261,7 +257,7 @@ TAIGI.tu14 = {
 	"([aeiouAEIOU](?:(?:nn|N|ⁿ)?h|p|t|k)|(?:m|M|ng|Ng)h)4": "$1",
 };
 TAIGI.tuSoo = {
-	"([a-uA-Uⁿ]*)([1-9])([!-\/:-@\[-`{-~\\s\\b])": "$1$3",
+	"([a-uoA-UO͘ⁿ]*)([1-9])([!-\/:-@\[-`{-~\\s\\b])": "$1$3",
 };
 
 function uannNasal (puann, nasal) {
@@ -271,7 +267,7 @@ function uannNasal (puann, nasal) {
 	case "nn":
 		puann = thuiUann(puann, TAIGI.nasal.nn); break;
 	case "ⁿ":
-		puann = thuiUann(puann, TAIGI.nasal.u207); break;
+		puann = thuiUann(puann, TAIGI.nasal.U207); break;
 	default:
 		puann = thuiUann(puann, TAIGI.nasal.nn); break;
 	}
@@ -282,25 +278,27 @@ function pojSou2tlSoo(pojs, nasal) {
 	//白話字數字式 => 台羅數字式
 	var puann = pojs;
 	puann = uannNasal(puann, nasal);
-	return puann.thuiUann(TAIGI.poj2tl);
+	return puann.thuiUann(TAIGI.POJ2TL);
 }
 
 function tlSoo2pojSou(tls, nasal) {
 	//台羅數字式 => 白話字數字式
 	var puann = tls;
-
-	puann = thuiUann(puann, TAIGI.tl2poj);
+	puann = thuiUann(puann, TAIGI.TL2POJ);
 	puann = uannNasal(puann, nasal);
-
 	return puann;
 }
 
-function Tiau2Soo(tiau, nasal, u14) {
+function Tiau2Soo(tiau, nasal, u14, isPOJ) {
 	//(台羅|白話字)調符式 => (台羅|白話字)數字式
 	var puann = tiau;
 	puann = thuiUann(puann, TAIGI.T2S);
+	if (isPOJ)
+		puann = thuiUann(puann, TAIGI.T2S.U0358.poj);
+	else
+		puann = thuiUann(puann, TAIGI.T2S.U0358.tl);
 
-	puann = thuiUann(puann, TAIGI.siangLooBue);
+	puann = thuiUann(puann, TAIGI.sakTiau);
 
 	puann = uannNasal(puann, nasal);
 
@@ -315,29 +313,28 @@ function Tiau2Soo(tiau, nasal, u14) {
 
 function pojSou2Tiau(pojSou) {
 	//白話字數字式 => 白話字調符式
-	var tiau = pojSou.thuiUann(TAIGI.u358);
-	tiau = thuiUann(tiau, TAIGI.suaTiau);
-	tiau = thuiUann(tiau, TAIGI.suaTiau.poj);
+	var tiau = pojSou.thuiUann(TAIGI.S2T.U0358);
+	tiau = thuiUann(tiau, TAIGI.tshiauTiau);
+	tiau = thuiUann(tiau, TAIGI.tshiauTiau.poj);
 	return tiau.thuiUann(TAIGI.S2T);
-
 }
 
 function tlSoo2Tiau(soo) {
 	//台羅數字式 => 台羅調符式
-	var tiau = soo.thuiUann(TAIGI.suaTiau);
-	tiau = tiau.thuiUann(TAIGI.suaTiau.tl);
+	var tiau = soo.thuiUann(TAIGI.tshiauTiau);
+	tiau = tiau.thuiUann(TAIGI.tshiauTiau.tl);
 	return tiau.thuiUann(TAIGI.S2T);
 }
 
 TAIGI.tsuan = function(puann, ji, tiau, nasal, u14) {
-	puann = Tiau2Soo(puann, nasal, u14);
+	puann = Tiau2Soo(puann, nasal, u14, false);
 	switch (ji) {
 	case "poj":
 		puann = tlSoo2pojSou(puann, nasal);
 		switch(tiau){
 		case "sou":	
 		case "bo":	
-			puann = Tiau2Soo(puann, nasal, u14);
+			puann = Tiau2Soo(puann, nasal, u14, true);
 			break;
 		case "hu":
 			puann = pojSou2Tiau(puann);
@@ -352,7 +349,7 @@ TAIGI.tsuan = function(puann, ji, tiau, nasal, u14) {
 		switch(tiau){
 		case "sou":	
 		case "bo":	
-			puann = Tiau2Soo(puann, nasal, u14);
+			puann = Tiau2Soo(puann, nasal, u14, false);
 			break;
 		case "hu":
 			puann = tlSoo2Tiau(puann, nasal);
@@ -367,33 +364,3 @@ TAIGI.tsuan = function(puann, ji, tiau, nasal, u14) {
 	else	
 		return puann;
 };
-
-TAIGI.ruby = {
-	"lô-má-jī": "羅馬字",
-	"hàn-jī": "漢字",
-	"ha̍h-khóan": "合款",
-	"huâ-gí": "華語",
-	"kái-gī": "解義",
-	"bûn-lē": "文例",
-	"jī": "字",
-	"siaⁿ": "聲",
-	"tâu-bûn": "投文",
-	"hôe-bûn": "回文",
-	"khiuⁿ": "腔",
-	"tsiàⁿ-jī-huat": "正字法",
-	"pe̍h-oē-jī": "白話字",
-	"tâi-lô": "台羅",
-	"siaⁿ-tīau": "聲調",
-	"tiàu-hû": "調符",
-	"sò͘-bé-lī": "數碼字",
-	"phīⁿ-im": "鼻音",
-	"ū": "有",
-	"bô": "無",
-};
-/*
-for (var k in TAIGI.ruby) {
-    if (TAIGI.ruby.hasOwnProperty(k)) {
-        alert('key is: ' + k + ', value is: ' + TAIGI.ruby[k]);
-    }
-}
-*/
