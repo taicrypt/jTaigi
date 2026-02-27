@@ -377,3 +377,16 @@ TAIGI.tsuan = function(puann, ji, tiau, nasal, u14) {
 	else	
 		return puann;
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports = {
+		TAIGI,
+		thuiUann,
+		uannNasal,
+		pojSou2tlSoo,
+		tlSoo2pojSou,
+		Tiau2Soo,
+		pojSou2Tiau,
+		tlSoo2Tiau,
+	};
+}
