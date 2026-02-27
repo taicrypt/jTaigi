@@ -7,7 +7,7 @@ const {
   Tiau2Soo,
   pojSou2Tiau,
   tlSoo2Tiau,
-} = require('./taigi');
+} = require('./src/index');
 
 // ---------------------------------------------------------------------------
 // Helper: thuiUann
@@ -27,15 +27,6 @@ describe('thuiUann – generic regex replacement', () => {
 
   test('global replacement within same key', () => {
     expect(thuiUann('abab', { a: 'z' })).toBe('zbzb');
-  });
-});
-
-// ---------------------------------------------------------------------------
-// String.prototype.thuiUann (method augmentation)
-// ---------------------------------------------------------------------------
-describe('String.prototype.thuiUann', () => {
-  test('works as instance method', () => {
-    expect('abc'.thuiUann({ b: 'x' })).toBe('axc');
   });
 });
 
