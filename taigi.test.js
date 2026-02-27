@@ -377,3 +377,68 @@ describe('edge cases', () => {
     expect(TAIGI.S2T['a4']).toBe('a');
   });
 });
+
+// ---------------------------------------------------------------------------
+// UMD bundle (taigi.js) parity
+// ---------------------------------------------------------------------------
+describe('UMD bundle (taigi.js) – parity with src/index', () => {
+  const umd = require('./taigi');
+
+  test('exports all expected functions', () => {
+    expect(typeof umd.thuiUann).toBe('function');
+    expect(typeof umd.uannNasal).toBe('function');
+    expect(typeof umd.pojSou2tlSoo).toBe('function');
+    expect(typeof umd.tlSoo2pojSou).toBe('function');
+    expect(typeof umd.Tiau2Soo).toBe('function');
+    expect(typeof umd.pojSou2Tiau).toBe('function');
+    expect(typeof umd.tlSoo2Tiau).toBe('function');
+    expect(typeof umd.tsuan).toBe('function');
+  });
+
+  test('exports TAIGI namespace with tsuan', () => {
+    expect(typeof umd.TAIGI).toBe('object');
+    expect(typeof umd.TAIGI.tsuan).toBe('function');
+  });
+
+  test('TAIGI namespace contains mapping tables', () => {
+    expect(umd.TAIGI.S2T).toBeDefined();
+    expect(umd.TAIGI.T2S).toBeDefined();
+    expect(umd.TAIGI.TL2POJ).toBeDefined();
+    expect(umd.TAIGI.POJ2TL).toBeDefined();
+  });
+
+  test('thuiUann works identically', () => {
+    expect(umd.thuiUann('abc', { b: 'x' })).toBe('axc');
+  });
+
+  test('pojSou2tlSoo matches src output', () => {
+    expect(umd.pojSou2tlSoo('chhiu2')).toBe(pojSou2tlSoo('chhiu2'));
+    expect(umd.pojSou2tlSoo('goeh8')).toBe(pojSou2tlSoo('goeh8'));
+  });
+
+  test('tlSoo2pojSou matches src output', () => {
+    expect(umd.tlSoo2pojSou('tshiu2')).toBe(tlSoo2pojSou('tshiu2'));
+  });
+
+  test('pojSou2Tiau matches src output', () => {
+    expect(umd.pojSou2Tiau('lang5')).toBe(pojSou2Tiau('lang5'));
+  });
+
+  test('tlSoo2Tiau matches src output', () => {
+    expect(umd.tlSoo2Tiau('lang5')).toBe(tlSoo2Tiau('lang5'));
+  });
+
+  test('Tiau2Soo matches src output', () => {
+    const input = 'lâng';
+    expect(umd.Tiau2Soo(input, 'nn', false, false))
+      .toBe(Tiau2Soo(input, 'nn', false, false));
+  });
+
+  test('TAIGI.tsuan matches src output', () => {
+    const input = 'lâng';
+    expect(umd.TAIGI.tsuan(input, 'poj', 'sou', 'nn', false))
+      .toBe(TAIGI.tsuan(input, 'poj', 'sou', 'nn', false));
+    expect(umd.TAIGI.tsuan(input, 'tl', 'hu', 'nn', false))
+      .toBe(TAIGI.tsuan(input, 'tl', 'hu', 'nn', false));
+  });
+});
