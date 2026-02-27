@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "javascript ê Tâi-gí ke-si-thâu",
   "main": "src/index.js",
+  "browser": "taigi.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "require": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./browser": "./taigi.js"
+  },
   "scripts": {
     "test": "jest"
   },
